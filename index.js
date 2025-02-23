@@ -52,6 +52,42 @@ app.get("/", async (req, res) => {
   }
 });
 
+// Route to render the Add Project page
+app.get("/add-project", (req, res) => {
+  res.render("addProject");  // Create this view for adding projects
+});
+
+// Route to handle Add Project form submission
+app.post("/add-project", async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    // Add project to the database using the model
+    await projectModel.addProject(name, description);
+    res.redirect("/"); // Redirect to the homepage to see the new project
+  } catch (error) {
+    console.error("Error adding project:", error);
+    res.status(500).send("Server error");
+  }
+});
+
+// Route to render the Add Skill page
+app.get("/add-skill", (req, res) => {
+  res.render("addSkill");  // Create this view for adding skills
+});
+
+// Route to handle Add Skill form submission
+app.post("/add-skill", async (req, res) => {
+  try {
+    const { name, level } = req.body;
+    // Add skill to the database using the model
+    await skillModel.addSkill(name, level);
+    res.redirect("/"); // Redirect to the homepage to see the new skill
+  } catch (error) {
+    console.error("Error adding skill:", error);
+    res.status(500).send("Server error");
+  }
+});
+
 // Example of additional routes (for your other components)
 app.use("/", require("./components/Project/routes"));
 app.use("/skill", require("./components/Skill/routes"));

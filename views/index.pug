@@ -1,20 +1,3 @@
-//- extends common/layout
-
-//- block layout-content 
-//-   .main-content 
-//-     h1.page-title Portfolio
-
-//-     h2 Project collection
-//-     each project in projects
-//-       div 
-//-         h3 Project: #{project.name}
-//-         p Description: #{project.description}
-
-//-     h2 Skillset
-//-     each skill in skills
-//-       div 
-//-         h3 Skill: #{skill.name}
-//-         p Level: #{skill.level}
 extends common/layout
 
 block layout-content
@@ -24,8 +7,11 @@ block layout-content
 
     //- Section for Project Collection
     .row
-      .col-md-12
-        h2.text-center Project Collection
+      .col-md-12.text-center
+        h2 Project Collection
+        a.btn.btn-success.mt-3(href="/add-project") ➕ Add Project
+
+    .row
       each project in projects
         .col-md-4.mb-4
           .card
@@ -37,8 +23,11 @@ block layout-content
 
     //- Section for Skillset
     .row.mt-5
-      .col-md-12
-        h2.text-center Skillset
+      .col-md-12.text-center
+        h2 Skillset
+        a.btn.btn-success.mt-3(href="/add-skill") ➕ Add Skill
+
+    .row
       each skill in skills
         .col-md-4.mb-4
           .card
