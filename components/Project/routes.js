@@ -1,8 +1,36 @@
-const express = require("express"); 
+const express = require("express");
 const router = express.Router();
+const projectModel = require("./model"); // Adjust path if necessary
 
-const { getAllProjects } = require("./controller");
+// Route to render the add project form
+router.get("/add-project", (req, res) => {
+  res.render("addProject"); // Ensure you have addProject.pug for the form
+});
 
-router.get("/", getAllProjects);
+// Route to handle POST request for adding a project
+router.post("/add-project", async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    // Add project to the database using the model
+    await projectModel.addProject(name, description);
+    res.redirect("/"); // Redirect to homepage after successful addition
+  } catch (error) {
+    console.error("Error adding project:", error);
+    res.status(500).send("Server error");
+  }
+});
 
+// Route to handle deleting a project
+router.post("/delete-project", async (req, res) => {
+    try {
+      const { name } = req.body;  // Getting the project name to delete
+      console.log("Deleting project:", name);  // Debugging line to check project name
+      await projectModel.deleteProject(name);  // Call the model function to delete the project
+      res.redirect("/");  // Redirect to the homepage after deletion
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      res.status(500).send("Server error");
+    }
+  });
+  
 module.exports = router;

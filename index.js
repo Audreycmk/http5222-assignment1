@@ -41,9 +41,6 @@ app.get("/", async (req, res) => {
     const projects = await projectModel.getProjects();
     const skills = await skillModel.getSkills(); // Ensure this returns an array
 
-    // Log the skills data to check if it is correctly fetched
-    console.log("Skills Data:", skills);
-
     // Render the index.pug page with the projects and skills data
     res.render("index", { projects, skills });
   } catch (error) {
@@ -87,10 +84,36 @@ app.post("/add-skill", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+// Route to handle deleting a project
+app.post("/delete-project", async (req, res) => {
+  try {
+    const { name } = req.body;
+    // Call the model function to delete the project
+    await projectModel.deleteProject(name);
+    res.redirect("/"); // Redirect to the homepage after deletion
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    res.status(500).send("Server error");
+  }
+});
+
+// Route to handle deleting a skill by name
+app.post("/delete-skill", async (req, res) => {
+  try {
+    const { name } = req.body;
+    // Call the model function to delete the skill by name
+    const result = await skillModel.deleteSkill(name);
+    console.log("Deleted skill result:", result);
+    res.redirect("/"); // Redirect to the homepage after deletion
+  } catch (error) {
+    console.error("Error deleting skill:", error);
+    res.status(500).send("Server error");
+  }
+});
 
 // Example of additional routes (for your other components)
 app.use("/", require("./components/Project/routes"));
-app.use("/skill", require("./components/Skill/routes"));
+app.use("/skills", require("./components/Skill/routes"));
 
 // Set up server listening
 app.listen(port, () => {

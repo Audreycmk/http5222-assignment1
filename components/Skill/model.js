@@ -52,10 +52,10 @@ async function updateSkill(name, newLevel) {
   ); 
 }
 
-// Delete skills by level
-async function deleteSkill(skillLevel) {
+// Delete skills by name
+async function deleteSkill(skillName) {
   await connect();
-  let result = await Skill.deleteMany({ level: skillLevel });
+  let result = await Skill.deleteOne({ name: skillName });
 
   return result;
 }

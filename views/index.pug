@@ -20,6 +20,10 @@ block layout-content
               p.card-text Description: #{project.description}
             .card-footer
               a.btn.btn-primary(href="#") View Details
+              // Delete button for projects
+              form(action="/delete-project", method="POST" style="display:inline-block;")
+                input(type="hidden", name="name", value=project.name)
+                button(type="submit", class="btn btn-danger") Delete Project
 
     //- Section for Skillset
     .row.mt-5
@@ -36,3 +40,7 @@ block layout-content
               p.card-text Level: #{skill.level}
             .card-footer
               a.btn.btn-secondary(href="#") View Details
+              // Delete button for skills
+              form(action="/delete-skill", method="POST" style="display:inline-block;")
+                input(type="hidden", name="name", value=skill.name)
+                button(type="submit", class="btn btn-danger") Delete Skill

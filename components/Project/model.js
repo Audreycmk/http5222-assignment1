@@ -58,7 +58,7 @@ async function updateProject(name, newDescription) {
 // Delete a project by name
 async function deleteProject(projectName) {
   await connect();
-  let result = await Project.deleteMany({ name: projectName });
+  let result = await Project.deleteOne({ name: projectName });
 }
 
 module.exports = {

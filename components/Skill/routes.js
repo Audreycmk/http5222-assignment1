@@ -1,8 +1,37 @@
-const express = require("express"); 
+const express = require("express");
 const router = express.Router();
+const skillModel = require("./model"); // Adjust path if necessary
 
-const { getAllSkills } = require("./controller");
+// Route to render the add skill form
+router.get("/add-skill", (req, res) => {
+  res.render("addSkill"); // Ensure you have addSkill.pug for the form
+});
 
-router.get("/", getAllSkills);
+// Route to handle POST request for adding a skill
+router.post("/add-skill", async (req, res) => {
+  try {
+    const { name, level } = req.body;
+    // Add skill to the database using the model
+    await skillModel.addSkill(name, level);
+    res.redirect("/"); // Redirect to homepage after successful addition
+  } catch (error) {
+    console.error("Error adding skill:", error);
+    res.status(500).send("Server error");
+  }
+});
 
+// Route to handle deleting a skill by name
+router.post("/delete-skill", async (req, res) => {
+    try {
+      const { name } = req.body;  // Getting the skill name to delete
+      console.log("Deleting skill:", name);  // Debugging line to check skill name
+      const result = await skillModel.deleteSkill(name);  // Call the model function to delete the skill
+      console.log("Deleted skill result:", result);  // Log the result of the deletion
+      res.redirect("/");  // Redirect to the homepage after deletion
+    } catch (error) {
+      console.error("Error deleting skill:", error);
+      res.status(500).send("Server error");
+    }
+  });
+  
 module.exports = router;
