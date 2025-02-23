@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title Add Project
+    link(rel='stylesheet', href='/styles.css')
+  body
+    h1 Add Project
+    form(action='/admin/add-project' method='POST')
+      label(for='title') Title:
+      input(type='text' name='title' required)
+      br
+      label(for='description') Description:
+      textarea(name='description' required)
+      br
+      button(type='submit') Add Project

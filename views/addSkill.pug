@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title Add Skill
+    link(rel='stylesheet', href='/styles.css')
+  body
+    h1 Add Skill
+    form(action='/admin/add-project' method='POST')
+      label(for='title') Skillset:
+      input(type='text' name='title' required)
+      br
+      label(for='description') Description:
+      textarea(name='description' required)
+      br
+      button(type='submit') Add Skill

@@ -1,0 +1,49 @@
+//- extends common/layout
+
+//- block layout-content 
+//-   .main-content 
+//-     h1.page-title Portfolio
+
+//-     h2 Project collection
+//-     each project in projects
+//-       div 
+//-         h3 Project: #{project.name}
+//-         p Description: #{project.description}
+
+//-     h2 Skillset
+//-     each skill in skills
+//-       div 
+//-         h3 Skill: #{skill.name}
+//-         p Level: #{skill.level}
+extends common/layout
+
+block layout-content
+  .container-fluid
+    //- Main header for the portfolio page
+    h1.page-title.text-center.my-5 Portfolio Admin Dashboard 
+
+    //- Section for Project Collection
+    .row
+      .col-md-12
+        h2.text-center Project Collection
+      each project in projects
+        .col-md-4.mb-4
+          .card
+            .card-body
+              h3.card-title= project.name
+              p.card-text Description: #{project.description}
+            .card-footer
+              a.btn.btn-primary(href="#") View Details
+
+    //- Section for Skillset
+    .row.mt-5
+      .col-md-12
+        h2.text-center Skillset
+      each skill in skills
+        .col-md-4.mb-4
+          .card
+            .card-body
+              h3.card-title= skill.name
+              p.card-text Level: #{skill.level}
+            .card-footer
+              a.btn.btn-secondary(href="#") View Details
