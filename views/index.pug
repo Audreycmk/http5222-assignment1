@@ -9,7 +9,7 @@ block layout-content
     .row
       .col-md-12.text-center
         h2 Project Collection
-        a.btn.btn-success.mt-3(href="/add-project") ➕ Add Project
+        a.btn.btn-primary.mt-3.btn-margin(href="/add-project") ➕ Add Project
 
     .row
       each project in projects
@@ -19,7 +19,7 @@ block layout-content
               h3.card-title #{project.name}
               p.card-text Description: #{project.description}
             .card-footer
-              a.btn.btn-primary(href="#") View Details
+              a.btn.btn-secondary(href="#") View Details
               // Delete button for projects
               form(action="/delete-project", method="POST" style="display:inline-block;")
                 input(type="hidden", name="name", value=project.name)
@@ -29,7 +29,7 @@ block layout-content
     .row.mt-5
       .col-md-12.text-center
         h2 Skillset
-        a.btn.btn-success.mt-3(href="/add-skill") ➕ Add Skill
+        a.btn.btn-primary.mt-3.btn-margin(href="/add-skill") ➕ Add Skill
 
     .row
       each skill in skills

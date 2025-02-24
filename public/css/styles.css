@@ -1,14 +1,19 @@
-#header {
-  background-color: #60b3c4; 
-  color: white; 
-  padding: 1rem; 
+
+/* .btn-primary {
+  background-color: rgb(184, 94, 109) !important; 
+  border-color: #ff5733 !important; 
+} */
+
+/* Customizing Bootstrap Card */
+.card {
+  background-color: rgba(236, 197, 192, 0.3) !important; 
+  border: 2px solid rgb(184, 94, 109) !important; 
 }
 
-#header a {
-  color: white; 
-  text-decoration: none;
+.bg-secondary {
+  background-color: rgb(184, 94, 109)!important; 
 }
 
-#header a:hover {
-  text-decoration: underline;
+.btn-margin {
+  margin: 30px;
 }
