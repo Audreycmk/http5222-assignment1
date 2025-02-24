@@ -4,17 +4,20 @@ const projectModel = require("./model"); // Adjust path if necessary
 
 // Route to render the add project form
 router.get("/add-project", (req, res) => {
-  res.render("addProject"); // Ensure you have addProject.pug for the form
+  res.render("addProject"); 
 });
 
 // Route to handle POST request for adding a project
 router.post("/add-project", async (req, res) => {
   try {
     const { name, description } = req.body;
-    // Add project to the database using the model
-    if (!name || !description) {
-      return res.status(400).send("Name and description are required");
+    
+    // Validate inputs (ensure non-empty strings)
+    if (!name || !description || typeof name !== 'string' || typeof description !== 'string') {
+      return res.status(400).send("Project name and description are required");
     }
+
+    // Add project to the database using the model
     await projectModel.addProject(name, description);
     res.redirect("/"); // Redirect to homepage after successful addition
   } catch (error) {

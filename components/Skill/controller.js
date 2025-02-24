@@ -9,7 +9,6 @@ const getAllSkills = async (request, response) => {
       skillList = await skillModel.getSkills();
     }
 
-    // Render skills to the index page
     response.render("index", { skills: skillList });
   } catch (error) {
     console.error("Error fetching skills: ", error);
@@ -28,7 +27,22 @@ const deleteSkill = async (request, response) => {
   }
 };
 
+// Add Skill function
+const addSkill = async (request, response) => {
+  try {
+    const { name, level } = request.body;
+
+    await skillModel.addSkill(name, level);
+    
+    response.redirect("/"); 
+  } catch (error) {
+    console.error("Error adding skill: ", error);
+    response.status(500).send("Error adding skill");
+  }
+};
+
 module.exports = {
   getAllSkills,
-  deleteSkill 
+  deleteSkill,
+  addSkill, 
 };

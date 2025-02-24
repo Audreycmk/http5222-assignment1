@@ -8,11 +8,14 @@ html
   body
     .container.mt-5
       h1.mb-4 Add Skill
+      if error
+        .alert.alert-danger
+          p #{error}
       form(action='/add-skill' method='POST' class='card p-4 shadow-sm')
         .mb-3
-          label.form-label(for='name') Skillset:
+          label.form-label(for='name') Skill:
           input.form-control(type='text' name='name' required)
         .mb-3
-          label.form-label(for='description') Description:
-          textarea.form-control(name='description' rows='4' required)
+          label.form-label(for='level') Level:
+          textarea.form-control(name='level' rows='4' required)
         button.btn.btn-success(type='submit') Add Skill

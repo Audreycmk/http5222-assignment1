@@ -4,7 +4,7 @@ const skillModel = require("./model"); // Adjust path if necessary
 
 // Route to render the add skill form
 router.get("/add-skill", (req, res) => {
-  res.render("addSkill"); // Ensure you have addSkill.pug for the form
+  res.render("addSkill", { error: null }); 
 });
 
 // Route to handle POST request for adding a skill
@@ -13,8 +13,8 @@ router.post("/add-skill", async (req, res) => {
     const { name, level } = req.body;
     
     // Validate inputs
-    if (!name || !level) {
-      return res.status(400).send("Skill name and level are required");
+    if (!name || !description || typeof name !== 'string' || typeof description !== 'string') {
+      return res.status(400).send("Skill name and Skill level are required");
     }
 
     // Add skill to the database using the model
@@ -30,8 +30,6 @@ router.post("/add-skill", async (req, res) => {
 router.post("/delete-skill", async (req, res) => {
   try {
     const { name } = req.body;
-
-    // Check if name exists before attempting to delete
     if (!name) {
       return res.status(400).send("Skill name is required");
     }
