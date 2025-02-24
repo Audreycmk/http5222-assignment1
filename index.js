@@ -55,75 +55,9 @@ app.get("/", async (req, res) => {
   }
 });
 
-// Route to render the Add Project page
-app.get("/add-project", (req, res) => {
-  res.render("addProject");
-});
-
-// Route to handle Add Project form submission
-app.post("/add-project", async (req, res) => {
-  try {
-    const { name, description } = req.body;
-
-    // Simple validation for form inputs
-    if (!name || !description) {
-      return res.status(400).send("Name and description are required");
-    }
-
-    await projectModel.addProject(name, description);
-    res.redirect("/"); // Redirect to the homepage to see the new project
-  } catch (error) {
-    handleError(res, error, "Error adding project");
-  }
-});
-
-// Route to render the Add Skill page
-app.get("/add-skill", (req, res) => {
-  res.render("addSkill");
-});
-
-// Route to handle Add Skill form submission
-app.post("/add-skill", async (req, res) => {
-  try {
-    const { name, level } = req.body;
-
-    // Simple validation for form inputs
-    if (!name || !level) {
-      return res.status(400).send("Name and level are required");
-    }
-
-    await skillModel.addSkill(name, level);
-    res.redirect("/"); // Redirect to the homepage to see the new skill
-  } catch (error) {
-    handleError(res, error, "Error adding skill");
-  }
-});
-
-// Route to handle deleting a project
-app.post("/delete-project", async (req, res) => {
-  try {
-    const { name } = req.body;
-    await projectModel.deleteProject(name);
-    res.redirect("/"); // Redirect to the homepage after deletion
-  } catch (error) {
-    handleError(res, error, "Error deleting project");
-  }
-});
-
-// Route to handle deleting a skill by name
-app.post("/delete-skill", async (req, res) => {
-  try {
-    const { name } = req.body;
-    const result = await skillModel.deleteSkill(name);
-    res.redirect("/"); // Redirect to the homepage after deletion
-  } catch (error) {
-    handleError(res, error, "Error deleting skill");
-  }
-});
-
-// Example of additional routes (for your other components)
+// Use the routes for projects and skills
 app.use("/", require("./components/Project/routes"));
-app.use("/skills", require("./components/Skill/routes"));
+app.use("/", require("./components/Skill/routes"));
 
 // Set up server listening
 app.listen(port, () => {
