@@ -12,6 +12,9 @@ router.post("/add-project", async (req, res) => {
   try {
     const { name, description } = req.body;
     // Add project to the database using the model
+    if (!name || !description) {
+      return res.status(400).send("Name and description are required");
+    }
     await projectModel.addProject(name, description);
     res.redirect("/"); // Redirect to homepage after successful addition
   } catch (error) {
@@ -22,15 +25,18 @@ router.post("/add-project", async (req, res) => {
 
 // Route to handle deleting a project
 router.post("/delete-project", async (req, res) => {
-    try {
-      const { name } = req.body;  // Getting the project name to delete
-      console.log("Deleting project:", name);  // Debugging line to check project name
-      await projectModel.deleteProject(name);  // Call the model function to delete the project
-      res.redirect("/");  // Redirect to the homepage after deletion
-    } catch (error) {
-      console.error("Error deleting project:", error);
-      res.status(500).send("Server error");
+  try {
+    const { name } = req.body;  // Getting the project name to delete
+    if (!name) {
+      return res.status(400).send("Project name is required");
     }
-  });
-  
+    console.log("Deleting project:", name);  // Debugging line to check project name
+    await projectModel.deleteProject(name);  // Call the model function to delete the project
+    res.redirect("/");  // Redirect to the homepage after deletion
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;

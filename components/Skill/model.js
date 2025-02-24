@@ -10,15 +10,24 @@ const Skill = mongoose.model("skill", skillSchema); // Link with collection "ski
 
 // MongoDB Functions
 
-// Connect to MongoDB
+// Connect to MongoDB (with improved connection handling)
+let isConnected = false;
+
 async function connect() {
+  if (isConnected) return;
   await db.connect();
+  isConnected = true;
 }
 
 // Get all skills from the skills collection
 async function getSkills() {
-  await connect();
-  return await Skill.find({}); // Return all skills
+  try {
+    await connect();
+    return await Skill.find({}); // Return all skills
+  } catch (error) {
+    console.error("Error fetching skills: ", error);
+    throw error;
+  }
 }
 
 // Initialize skills collection with some initial data
@@ -30,34 +39,58 @@ async function initializeSkills() {
     { name: "HTML", level: "Beginner" },
     { name: "Demo", level: "Advanced" }
   ];    
-  await Skill.insertMany(skillList);
+
+  try {
+    await connect();
+    await Skill.insertMany(skillList);
+  } catch (error) {
+    console.error("Error initializing skills: ", error);
+    throw error;
+  }
 }
 
 // Add a new skill to the database
 async function addSkill(name, level) {
-  await connect();
+  try {
+    await connect();
 
-  let newSkill = new Skill({ name, level });
-  let result = await newSkill.save(); // Save to the DB collection
-  console.log(result);
+    let newSkill = new Skill({ name, level });
+    let result = await newSkill.save();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error adding skill: ", error);
+    throw error;
+  }
 }
 
 // Update an existing skill's level
 async function updateSkill(name, newLevel) {
-  await connect();
+  try {
+    await connect();
 
-  let result = await Skill.updateOne(
-    { name: name },
-    { level: newLevel }
-  ); 
+    let result = await Skill.updateOne(
+      { name: name },
+      { level: newLevel }
+    ); 
+    return result;
+  } catch (error) {
+    console.error("Error updating skill: ", error);
+    throw error;
+  }
 }
 
 // Delete skills by name
 async function deleteSkill(skillName) {
-  await connect();
-  let result = await Skill.deleteOne({ name: skillName });
+  try {
+    await connect();
+    let result = await Skill.deleteOne({ name: skillName });
 
-  return result;
+    return result;
+  } catch (error) {
+    console.error("Error deleting skill: ", error);
+    throw error;
+  }
 }
 
 module.exports = {

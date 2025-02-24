@@ -11,6 +11,12 @@ router.get("/add-skill", (req, res) => {
 router.post("/add-skill", async (req, res) => {
   try {
     const { name, level } = req.body;
+    
+    // Validate inputs
+    if (!name || !level) {
+      return res.status(400).send("Skill name and level are required");
+    }
+
     // Add skill to the database using the model
     await skillModel.addSkill(name, level);
     res.redirect("/"); // Redirect to homepage after successful addition
@@ -22,16 +28,23 @@ router.post("/add-skill", async (req, res) => {
 
 // Route to handle deleting a skill by name
 router.post("/delete-skill", async (req, res) => {
-    try {
-      const { name } = req.body;  // Getting the skill name to delete
-      console.log("Deleting skill:", name);  // Debugging line to check skill name
-      const result = await skillModel.deleteSkill(name);  // Call the model function to delete the skill
-      console.log("Deleted skill result:", result);  // Log the result of the deletion
-      res.redirect("/");  // Redirect to the homepage after deletion
-    } catch (error) {
-      console.error("Error deleting skill:", error);
-      res.status(500).send("Server error");
+  try {
+    const { name } = req.body;
+
+    // Check if name exists before attempting to delete
+    if (!name) {
+      return res.status(400).send("Skill name is required");
     }
-  });
+
+    console.log("Deleting skill:", name);  // Debugging line to check skill name
+    const result = await skillModel.deleteSkill(name);  // Call the model function to delete the skill
+    console.log("Deleted skill result:", result);  // Log the result of the deletion
+
+    res.redirect("/");  // Redirect to the homepage after deletion
+  } catch (error) {
+    console.error("Error deleting skill:", error);
+    res.status(500).send("Server error");
+  }
+});
   
 module.exports = router;

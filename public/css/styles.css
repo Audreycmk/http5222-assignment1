@@ -1,0 +1,14 @@
+#header {
+  background-color: #60b3c4; 
+  color: white; 
+  padding: 1rem; 
+}
+
+#header a {
+  color: white; 
+  text-decoration: none;
+}
+
+#header a:hover {
+  text-decoration: underline;
+}

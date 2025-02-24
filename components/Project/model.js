@@ -12,8 +12,16 @@ const Project = mongoose.model("project", projectSchema); // Link with collectio
 
 // Connect to MongoDB
 async function connect() {
-  await db.connect();
+  try {
+    // Add any connection logic here
+    await db.connect(); 
+    console.log("Database connected");
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    throw error;  // Propagate the error to handle it in the calling function
+  }
 }
+
 
 // Get all projects from the projects collection
 async function getProjects() {

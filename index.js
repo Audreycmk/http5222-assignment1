@@ -11,7 +11,7 @@ dotenv.config();
 
 // Set up the Express app
 const app = express();
-const port = process.env.PORT || "8080";
+const port = process.env.PORT || 8080;
 
 // Set up application template engine
 app.set("views", path.join(__dirname, "views"));
@@ -30,70 +30,83 @@ app.use(
     name: "MyUniqueSessID",
     saveUninitialized: false,
     resave: false,
-    cookie: {}
+    cookie: {
+      httpOnly: true, // Ensures cookie is not accessible through JavaScript
+      secure: process.env.NODE_ENV === "production", // Only set the cookie over HTTPS in production
+      sameSite: "Strict", // Helps prevent CSRF attacks
+    },
   })
 );
+
+// Centralized error handler function
+const handleError = (res, error, message = "Server error") => {
+  console.error(error);
+  res.status(500).send(message);
+};
 
 // Route to render the index page with projects and skills
 app.get("/", async (req, res) => {
   try {
-    // Fetch projects and skills from the database
     const projects = await projectModel.getProjects();
-    const skills = await skillModel.getSkills(); // Ensure this returns an array
-
-    // Render the index.pug page with the projects and skills data
+    const skills = await skillModel.getSkills();
     res.render("index", { projects, skills });
   } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).send("Server error");
+    handleError(res, error);
   }
 });
 
 // Route to render the Add Project page
 app.get("/add-project", (req, res) => {
-  res.render("addProject");  // Create this view for adding projects
+  res.render("addProject");
 });
 
 // Route to handle Add Project form submission
 app.post("/add-project", async (req, res) => {
   try {
     const { name, description } = req.body;
-    // Add project to the database using the model
+
+    // Simple validation for form inputs
+    if (!name || !description) {
+      return res.status(400).send("Name and description are required");
+    }
+
     await projectModel.addProject(name, description);
     res.redirect("/"); // Redirect to the homepage to see the new project
   } catch (error) {
-    console.error("Error adding project:", error);
-    res.status(500).send("Server error");
+    handleError(res, error, "Error adding project");
   }
 });
 
 // Route to render the Add Skill page
 app.get("/add-skill", (req, res) => {
-  res.render("addSkill");  // Create this view for adding skills
+  res.render("addSkill");
 });
 
 // Route to handle Add Skill form submission
 app.post("/add-skill", async (req, res) => {
   try {
     const { name, level } = req.body;
-    // Add skill to the database using the model
+
+    // Simple validation for form inputs
+    if (!name || !level) {
+      return res.status(400).send("Name and level are required");
+    }
+
     await skillModel.addSkill(name, level);
     res.redirect("/"); // Redirect to the homepage to see the new skill
   } catch (error) {
-    console.error("Error adding skill:", error);
-    res.status(500).send("Server error");
+    handleError(res, error, "Error adding skill");
   }
 });
+
 // Route to handle deleting a project
 app.post("/delete-project", async (req, res) => {
   try {
     const { name } = req.body;
-    // Call the model function to delete the project
     await projectModel.deleteProject(name);
     res.redirect("/"); // Redirect to the homepage after deletion
   } catch (error) {
-    console.error("Error deleting project:", error);
-    res.status(500).send("Server error");
+    handleError(res, error, "Error deleting project");
   }
 });
 
@@ -101,13 +114,10 @@ app.post("/delete-project", async (req, res) => {
 app.post("/delete-skill", async (req, res) => {
   try {
     const { name } = req.body;
-    // Call the model function to delete the skill by name
     const result = await skillModel.deleteSkill(name);
-    console.log("Deleted skill result:", result);
     res.redirect("/"); // Redirect to the homepage after deletion
   } catch (error) {
-    console.error("Error deleting skill:", error);
-    res.status(500).send("Server error");
+    handleError(res, error, "Error deleting skill");
   }
 });
 
