@@ -38,13 +38,6 @@ app.use(
   })
 );
 
-// Centralized error handler function
-const handleError = (res, error, message = "Server error") => {
-  console.error(error);
-  res.status(500).send(message);
-};
-
-// Route to render the index page with projects and skills
 app.get("/", async (req, res) => {
   try {
     const projects = await projectModel.getProjects();
@@ -55,9 +48,35 @@ app.get("/", async (req, res) => {
   }
 });
 
+// Centralized error handler function
+const handleError = (res, error, message = "Server error") => {
+  console.error(error);
+  res.status(500).send(message);
+};
+
+// Route to render the index page with projects and skills
+app.get("/api/projects", async (req, res) => {
+  try {
+    const projects = await projectModel.getProjects();
+    res.json({ projects });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch projects" });
+  }
+});
+
+app.get("/api/skills", async (req, res) => {
+  try {
+    const skills = await skillModel.getSkills();
+    res.json({ skills });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch skills" });
+  }
+});
+
 // Use the routes for projects and skills
-app.use("/", require("./components/Project/routes"));
-app.use("/", require("./components/Skill/routes"));
+app.use("/api/projects", require("./components/Project/routes"));
+app.use("/api/skills", require("./components/Skill/routes"));
+
 
 // Set up server listening
 app.listen(port, () => {
