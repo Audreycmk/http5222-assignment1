@@ -13,6 +13,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
 
+app.use(cors());
 // Set up application template engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
