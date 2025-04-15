@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const path = require("path");
 const sessions = require("express-session");
 const dotenv = require("dotenv");
