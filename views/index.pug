@@ -9,7 +9,7 @@ block layout-content
     .row
       .col-md-12.text-center
         h2 Project Collection
-        a.btn.btn-primary.mt-3.btn-margin(href="/add-project") ➕ Add Project
+        a.btn.btn-primary.mt-3.btn-margin(href="/projects/add") ➕ Add Project
 
     .row
       each project in projects
@@ -18,18 +18,31 @@ block layout-content
             .card-body
               h3.card-title #{project.name}
               p.card-text Description: #{project.description}
+              if project.date
+                p.card-text Date: #{project.date}
+              if project.technologies && project.technologies.length
+                p.card-text Technologies: #{project.technologies.join(', ')}
+
+              //- Display media if it exists
+              if project.media
+                if project.media.endsWith('.mp4') || project.media.endsWith('.webm') || project.media.endsWith('.ogg')
+                  video(controls width="100%")
+                    source(src=project.media type="video/mp4")
+                    Your browser does not support the video tag.
+                else
+                  img(src=project.media alt=`${project.name} media` class="img-fluid mb-2")
+                
             .card-footer
               a.btn.btn-secondary(href="#") View Details
-              // Delete button for projects
-              form(action="/delete-project", method="POST" style="display:inline-block;")
-                input(type="hidden", name="name", value=project.name)
-                button(type="submit", class="btn btn-danger") Delete Project
+              a.btn.btn-warning.mx-1(href=`/projects/edit/${project._id}`) Edit
+              form(action=`/projects/${project._id}?_method=DELETE` method="POST" style="display:inline-block;")
+                button(type="submit" class="btn btn-danger") Delete Project
 
     //- Section for Skillset
     .row.mt-5
       .col-md-12.text-center
         h2 Skillset
-        a.btn.btn-primary.mt-3.btn-margin(href="/add-skill") ➕ Add Skill
+        a.btn.btn-primary.mt-3.btn-margin(href="/skills/add") ➕ Add Skill
 
     .row
       each skill in skills
@@ -41,6 +54,6 @@ block layout-content
             .card-footer
               a.btn.btn-secondary(href="#") View Details
               // Delete button for skills
-              form(action="/delete-skill", method="POST" style="display:inline-block;")
+              form(action="/skills/delete", method="POST" style="display:inline-block;")
                 input(type="hidden", name="name", value=skill.name)
                 button(type="submit", class="btn btn-danger") Delete Skill

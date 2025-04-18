@@ -3,12 +3,12 @@ const router = express.Router();
 const skillModel = require("./model");
 
 // Route to render the add skill form
-router.get("/add-skill", (req, res) => {
+router.get("/add", (req, res) => {
   res.render("addSkill", { error: null });
 });
 
 // Route to handle POST request for adding a skill
-router.post("/add-skill", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { name, level } = req.body;
 
@@ -27,7 +27,7 @@ router.post("/add-skill", async (req, res) => {
 });
 
 // Route to handle deleting a skill by name
-router.post("/delete-skill", async (req, res) => {
+router.post("/delete", async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
