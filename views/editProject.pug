@@ -127,3 +127,111 @@ block layout-content
           alert(errorMessage);
         }
       });
+          document.getElementById('editProjectForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const projectId = '#{project._id}';
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+            
+            try {
+              // Convert comma-separated strings to arrays
+              const techInput = formData.get('technologies');
+              const membersInput = formData.get('members');
+              
+              if (techInput) {
+                formData.set('technologies', techInput.split(',').map(t => t.trim()));
+              }
+              
+              if (membersInput) {
+                formData.set('members', membersInput.split(',').map(m => m.trim()));
+              }
+
+              const response = await axios.put(`/projects/${projectId}`, formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              });
+              
+              if (response.data) {
+                window.location.href = '/';
+              } else {
+                throw new Error('Update failed - no data returned');
+              }
+            } catch (error) {
+              console.error('Full error:', error);
+              
+              // Restore button state
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Update Project';
+              
+              // Show detailed error message
+              let errorMessage = 'Error updating project';
+              if (error.response) {
+                errorMessage += ` (${error.response.status}): `;
+                if (error.response.data && error.response.data.message) {
+                  errorMessage += error.response.data.message;
+                } else {
+                  errorMessage += 'Server error occurred';
+                }
+              } else {
+                errorMessage += `: ${error.message}`;
+              }
+              
+              alert(errorMessage);
+            }
+          });
+              document.getElementById('editProjectForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const projectId = '#{project._id}';
+                
+                // Convert comma-separated strings to arrays
+                const techInput = formData.get('technologies');
+                const membersInput = formData.get('members');
+                
+                if (techInput) {
+                  formData.set('technologies', techInput.split(',').map(t => t.trim()));
+                }
+                
+                if (membersInput) {
+                  formData.set('members', membersInput.split(',').map(m => m.trim()));
+                }
+
+                try {
+                  // IMPORTANT: Match this URL with your server route
+                  const response = await axios.put(`/projects/${projectId}`, formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  });
+                  
+                  if (response.data) {
+                    window.location.href = '/';
+                  } else {
+                    throw new Error('Update failed');
+                  }
+                } catch (error) {
+                  console.error('Update error:', error);
+                  let errorMessage = 'Error updating project';
+                  
+                  if (error.response) {
+                    // Handle HTTP errors
+                    if (error.response.status === 404) {
+                      errorMessage = 'Project not found (404)';
+                    } else {
+                      errorMessage += `: ${error.response.data?.message || error.response.statusText}`;
+                    }
+                  } else {
+                    // Handle network errors
+                    errorMessage += `: ${error.message}`;
+                  }
+                  
+                  alert(errorMessage);
+                }
+              });

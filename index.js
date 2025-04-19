@@ -47,6 +47,9 @@ app.use(
   })
 );
 
+app.use("/projects", projectRoutes);
+app.use("/skills", skillRoutes);
+
 // 🔁 Mount API routes under `/api`
 app.use("/api/projects", projectRoutes);
 app.use("/api/skills", skillRoutes);
