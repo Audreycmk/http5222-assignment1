@@ -21,8 +21,9 @@ const getAllProjects = async (req, res) => {
     // Transform media paths to full URLs if they exist
     const projectsWithMedia = projectList.map(project => ({
       ...project._doc,
-      media: project.media ? `${req.protocol}://${req.get('host')}/${project.media}` : null
+      media: project.media || null
     }));
+    
 
     res.json(projectsWithMedia);
   } catch (error) {
