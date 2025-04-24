@@ -1,4 +1,12 @@
 const projectModel = require("./model");
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: "dtxmgotbr",
+  api_key: "611997419319178",
+  api_secret: "Gr02Jbtx3euZ9249YwdA6pNfaIA"
+});
+
 
 // Get all projects from the database and render them
 const getAllProjects = async (req, res) => {
@@ -43,8 +51,17 @@ const addProject = async (req, res) => {
     const { name, description, date, technologies, github, members, website } = req.body;
 
     // Handle media upload
-    const media = req.file ? req.file.path : null;
-    const mediaType = req.file ? req.file.mimetype.split('/')[0] : null;
+    let media = null;
+    let mediaType = null;
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'portfolio'
+      });
+      media = result.secure_url;
+      mediaType = req.file.mimetype.split('/')[0];
+    }
+
 
     const newProject = await projectModel.addProject({
       name,
@@ -57,6 +74,7 @@ const addProject = async (req, res) => {
       media,
       mediaType,
     });
+    
 
     res.status(201).json(newProject);
   } catch (error) {
@@ -73,9 +91,13 @@ const updateProject = async (req, res) => {
 
     // Handle media upload
     if (req.file) {
-      updateData.media = req.file.path;
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'portfolio'
+      });
+      updateData.media = result.secure_url;
       updateData.mediaType = req.file.mimetype.split('/')[0];
     }
+    
 
     // Handle arrays
     if (updateData.technologies && typeof updateData.technologies === 'string') {
