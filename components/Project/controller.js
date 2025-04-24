@@ -1,11 +1,5 @@
 const projectModel = require("./model");
-const cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-  cloud_name: "dtxmgotbr",
-  api_key: "611997419319178",
-  api_secret: "Gr02Jbtx3euZ9249YwdA6pNfaIA"
-});
+const { cloudinary } = require("../../cloudinaryConfig");
 
 
 // Get all projects from the database and render them
