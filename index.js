@@ -78,7 +78,7 @@ app.get("/", async (req, res) => {
 app.get("/api/projects", async (req, res) => {
   try {
     const projects = await projectModel.getProjects();
-    res.json({ projects});
+    res.json(projects);
   } catch (error) {
     handleError(res, error, "Failed to load API root data");
   }
