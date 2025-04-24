@@ -28,15 +28,20 @@ html
         
         .mb-3
           label.form-label(for='github') GitHub URL:
-          input.form-control(type='url' name='github' placeholder="https://github.com/yourusername/project")
+          input.form-control(type='url' name='github' placeholder="GitHub Link")
         
+        .mb-3
+          label.form-label(for='website') Project Website (optional):
+          input.form-control(type='url' name='website' placeholder="Hosted Website URL")
+
         .mb-3
           label.form-label(for='members') Team Members (comma separated):
           input.form-control(type='text' name='members' placeholder="John Doe, Jane Smith")
         
         .mb-3
           label.form-label(for='media') Project Media (Image or Video):
-          input.form-control(type='file' name='media' accept="image/*,video/*")
+          input.form-control(type='file' name='media' accept="image/*,video/*" id="mediaInput")
+          #preview.mt-3
         
         button.btn.btn-primary(type='submit') Add Project
 
@@ -69,3 +74,16 @@ html
             alert('Error adding project: ' + (error.response?.data?.message || error.message));
           }
         });
+        document.getElementById("mediaInput").addEventListener("change", function() {
+          const file = this.files[0];
+          const preview = document.getElementById("preview");
+          if (file) {
+            const url = URL.createObjectURL(file);
+            preview.innerHTML = file.type.startsWith("video/")
+              ? `<video src="${url}" width="100%" controls></video>`
+              : `<img src="${url}" alt="Preview" class="img-fluid rounded" style="max-height: 300px;">`;
+          } else {
+            preview.innerHTML = "";
+          }
+        });
+        

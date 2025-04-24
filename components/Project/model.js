@@ -8,6 +8,7 @@ const projectSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },  // Use Date type with default value
   technologies: { type: [String], required: true },
   github: { type: String, required: true },
+  website: { type: String },
   members: { type: [String], default: [] },  // Default to empty array if no members
   media: { type: String, default: null },  // Optional field for media
   mediaType: { type: String, default: null }  // Optional field for media type (image/video/etc.)

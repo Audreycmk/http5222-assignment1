@@ -1,8 +1,7 @@
 const projectModel = require("./model");
-const path = require('path');
 
 // Get all projects from the database and render them
-const getAllProjects = async (request, response) => {
+const getAllProjects = async (req, res) => {
   try {
     let projectList = await projectModel.getProjects();
 
@@ -11,73 +10,60 @@ const getAllProjects = async (request, response) => {
       projectList = await projectModel.getProjects();
     }
 
-    // Render projects to the index page
-    response.render("index", { projects: projectList });
+    res.json(projectList); // returning as JSON
   } catch (error) {
     console.error("Error fetching projects: ", error);
-    response.status(500).send("Error retrieving projects");
+    res.status(500).json({ message: "Error retrieving projects" });
   }
 };
 
-// Add a new project to the database
-const addProject = async (request, response) => {
+// Add a new project
+const addProject = async (req, res) => {
   try {
-    const { name, description, date, technologies, github, members } = request.body;
-    const mediaFile = request.file;
+    const { name, description, date, technologies, github, members, website } = req.body;
 
-    // Validate required input
-    if (!name || !description) {
-      return response.status(400).send("Name and description are required");
-    }
+    const media = req.file?.path || null;
+    const mediaType = req.file?.mimetype?.split('/')[0] || null;
 
-    // Prepare project data
-    const projectData = {
+    const newProject = await projectModel.addProject({
       name,
       description,
-      date: date || "June 2025",
-      technologies: technologies ? technologies.split(',').map(t => t.trim()) : [],
-      github: github || "#",
-      members: members ? members.split(',').map(m => m.trim()) : [],
-    };
+      date,
+      technologies: Array.isArray(technologies) ? technologies : technologies?.split(','),
+      github,
+      members: Array.isArray(members) ? members : members?.split(','),
+      website,
+      media,
+      mediaType,
+    });
 
-    // Handle file upload if present
-    if (mediaFile) {
-      projectData.media = `/uploads/${mediaFile.filename}`;
-      projectData.mediaType = mediaFile.mimetype.split('/')[0]; // 'image' or 'video'
-    }
-
-    // Call the model to add the project
-    await projectModel.addProject(projectData);
-    response.redirect("/");  // Redirect to homepage after adding project
+    res.status(201).json(newProject);
   } catch (error) {
-    console.error("Error adding project:", error);
-    response.status(500).send("Server error: " + error.message);
+    console.error("Add project error:", error);
+    res.status(500).json({ message: "Failed to add project", error });
   }
 };
 
-const updateProject = async (req, res) => {  // Make sure to include both req and res
+// Update project
+const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
-    
-    // Handle file upload if present
+
     if (req.file) {
-      updateData.media = `/uploads/${req.file.filename}`;
+      updateData.media = req.file.path;
       updateData.mediaType = req.file.mimetype.split('/')[0];
     }
 
-    // Convert comma-separated strings to arrays if needed
     if (updateData.technologies && typeof updateData.technologies === 'string') {
       updateData.technologies = updateData.technologies.split(',').map(t => t.trim());
     }
-    
+
     if (updateData.members && typeof updateData.members === 'string') {
       updateData.members = updateData.members.split(',').map(m => m.trim());
     }
 
     const updatedProject = await projectModel.updateProject(id, updateData);
-    
-    // Make sure to use res.json() instead of returning
     res.json(updatedProject);
   } catch (error) {
     console.error("Error updating project:", error);
@@ -85,22 +71,22 @@ const updateProject = async (req, res) => {  // Make sure to include both req an
   }
 };
 
-// Delete a project by name
-const deleteProject = async (request, response) => {
+// Delete project
+const deleteProject = async (req, res) => {
   try {
-    const { id } = request.params;  // Get ID from URL params
+    const { id } = req.params;
+
     if (!id) {
-      return response.status(400).send("Project ID is required");
+      return res.status(400).send("Project ID is required");
     }
-    
+
     await projectModel.deleteProject(id);
-    response.redirect("/");
+    res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
     console.error("Error deleting project:", error);
-    response.status(500).send("Server error: " + error.message);
+    res.status(500).json({ message: "Server error", error });
   }
 };
-
 
 module.exports = {
   getAllProjects,

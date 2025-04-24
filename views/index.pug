@@ -22,13 +22,17 @@ block layout-content
                 p.card-text Date: #{project.date}
               if project.technologies && project.technologies.length
                 p.card-text Technologies: #{project.technologies.join(', ')}
+              if project.website
+                p.card-text
+                  | Website: 
+                  a(href=project.website target="_blank") #{project.website}
 
               //- Display media if it exists
               if project.media
                 if project.media.endsWith('.mp4') || project.media.endsWith('.webm') || project.media.endsWith('.ogg')
                   video(controls width="100%")
                     source(src=project.media type="video/mp4")
-                    Your browser does not support the video tag.
+                    | Your browser does not support the video tag.
                 else
                   img(src=project.media alt=`${project.name} media` class="img-fluid mb-2")
                 
