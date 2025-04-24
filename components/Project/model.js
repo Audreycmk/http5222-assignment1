@@ -8,7 +8,8 @@ const projectSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },  // Use Date type with default value
   technologies: { type: [String], required: true },
   github: { type: String, required: true },
-  website: { type: String },
+  website: { type: String },  // Main project website
+  demoWebsite: { type: String },  // Live demo URL
   members: { type: [String], default: [] },  // Default to empty array if no members
   media: { type: String, default: null },  // Optional field for media
   mediaType: { type: String, default: null }  // Optional field for media type (image/video/etc.)
@@ -70,6 +71,8 @@ async function addProject(projectData) {
     date: projectData.date || new Date(),  // Default to current date if not provided
     technologies: projectData.technologies || [],
     github: projectData.github || "#",
+    website: projectData.website || null,
+    demoWebsite: projectData.demoWebsite || null,
     members: projectData.members || [],
     media: projectData.media || null,
     mediaType: projectData.mediaType || null

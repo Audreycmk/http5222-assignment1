@@ -47,10 +47,11 @@ app.use(
   })
 );
 
+// Mount routes
 app.use("/projects", projectRoutes);
 app.use("/skills", skillRoutes);
 
-// 🔁 Mount API routes under `/api`
+// API routes
 app.use("/api/projects", projectRoutes);
 app.use("/api/skills", skillRoutes);
 
@@ -59,9 +60,17 @@ app.get("/", async (req, res) => {
   try {
     const projects = await projectModel.getProjects();
     const skills = await skillModel.getSkills();
-    res.render("index", { projects, skills });
+    res.render("index", { 
+      projects, 
+      skills,
+      query: req.query // Pass query parameters to the view
+    });
   } catch (error) {
-    handleError(res, error);
+    console.error("Error on main page:", error);
+    res.status(500).render("error", { 
+      message: "Error loading projects and skills",
+      error: process.env.NODE_ENV === "development" ? error : {}
+    });
   }
 });
 
@@ -83,10 +92,11 @@ app.get("/api/skills", async (req, res) => {
     handleError(res, error, "Failed to load API root data");
   }
 });
+
 // Centralized error handler
 const handleError = (res, error, message = "Server error") => {
   console.error(error);
-  res.status(500).send(message);
+  res.status(500).json({ message, error: process.env.NODE_ENV === "development" ? error.message : undefined });
 };
 
 // Start the server

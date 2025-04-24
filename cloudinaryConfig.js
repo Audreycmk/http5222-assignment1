@@ -1,6 +1,5 @@
-// cloudinaryConfig.js
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 cloudinary.config({
   cloud_name: "dtxmgotbr",
@@ -11,12 +10,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "portfolio-images",
-    allowed_formats: ["jpg", "png", "jpeg"],
-  },
+    folder: 'portfolio',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm']
+  }
 });
 
-module.exports = {
-  cloudinary,
-  storage
-};
+module.exports = { storage };

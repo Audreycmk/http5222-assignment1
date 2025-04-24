@@ -1,0 +1,18 @@
+extends common/layout
+
+block layout-content
+  .container.mt-5
+    .row
+      .col-md-8.offset-md-2
+        .card.border-danger
+          .card-header.bg-danger.text-white
+            h3 Error
+          .card-body
+            h4.card-title= message || "An error occurred"
+            if error && error.message
+              p.card-text= error.message
+            if error && error.stack && process.env.NODE_ENV === "development"
+              pre.bg-light.p-3.rounded
+                code= error.stack
+            .mt-4
+              a.btn.btn-primary(href="/") Return to Home 

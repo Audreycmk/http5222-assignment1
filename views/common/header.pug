@@ -1,3 +1,19 @@
-header#header.p-3.text-white.bg-secondary 
-  h2#site-name
-    a.text-white.text-decoration-none(href="/") Portfolio Admin Dashboard
+header#header.p-3.text-white.bg-dark
+  .container
+    .d-flex.justify-content-between.align-items-center
+      h2#site-name.mb-0
+        a.text-white.text-decoration-none(href="/") Portfolio Admin Dashboard
+      nav
+        ul.nav
+          li.nav-item
+            a.nav-link.text-white(href="/")
+              i.fas.fa-home.me-1
+              | Home
+          li.nav-item
+            a.nav-link.text-white(href="/projects/add")
+              i.fas.fa-plus-circle.me-1
+              | Add Project
+          li.nav-item
+            a.nav-link.text-white(href="/skills/add")
+              i.fas.fa-plus-circle.me-1
+              | Add Skill

@@ -10,10 +10,30 @@ const getAllProjects = async (req, res) => {
       projectList = await projectModel.getProjects();
     }
 
-    res.json(projectList); // returning as JSON
+    // Transform media paths to full URLs if they exist
+    const projectsWithMedia = projectList.map(project => ({
+      ...project._doc,
+      media: project.media ? `${req.protocol}://${req.get('host')}/${project.media}` : null
+    }));
+
+    res.json(projectsWithMedia);
   } catch (error) {
     console.error("Error fetching projects: ", error);
     res.status(500).json({ message: "Error retrieving projects" });
+  }
+};
+
+// Get a single project by ID
+const getProjectById = async (req, res) => {
+  try {
+    const project = await projectModel.getProjectById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.json(project);
+  } catch (error) {
+    console.error("Error fetching project: ", error);
+    res.status(500).json({ message: "Error retrieving project" });
   }
 };
 
@@ -22,17 +42,18 @@ const addProject = async (req, res) => {
   try {
     const { name, description, date, technologies, github, members, website } = req.body;
 
-    const media = req.file?.path || null;
-    const mediaType = req.file?.mimetype?.split('/')[0] || null;
+    // Handle media upload
+    const media = req.file ? req.file.path : null;
+    const mediaType = req.file ? req.file.mimetype.split('/')[0] : null;
 
     const newProject = await projectModel.addProject({
       name,
       description,
-      date,
-      technologies: Array.isArray(technologies) ? technologies : technologies?.split(','),
+      date: date ? new Date(date) : new Date(),
+      technologies: Array.isArray(technologies) ? technologies : technologies?.split(',').map(t => t.trim()),
       github,
-      members: Array.isArray(members) ? members : members?.split(','),
       website,
+      members: Array.isArray(members) ? members : members?.split(',').map(m => m.trim()),
       media,
       mediaType,
     });
@@ -40,7 +61,7 @@ const addProject = async (req, res) => {
     res.status(201).json(newProject);
   } catch (error) {
     console.error("Add project error:", error);
-    res.status(500).json({ message: "Failed to add project", error });
+    res.status(500).json({ message: "Failed to add project", error: error.message });
   }
 };
 
@@ -48,13 +69,15 @@ const addProject = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const updateData = { ...req.body };
 
+    // Handle media upload
     if (req.file) {
       updateData.media = req.file.path;
       updateData.mediaType = req.file.mimetype.split('/')[0];
     }
 
+    // Handle arrays
     if (updateData.technologies && typeof updateData.technologies === 'string') {
       updateData.technologies = updateData.technologies.split(',').map(t => t.trim());
     }
@@ -63,11 +86,19 @@ const updateProject = async (req, res) => {
       updateData.members = updateData.members.split(',').map(m => m.trim());
     }
 
+    // Handle date
+    if (updateData.date) {
+      updateData.date = new Date(updateData.date);
+    }
+
     const updatedProject = await projectModel.updateProject(id, updateData);
+    if (!updatedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
     res.json(updatedProject);
   } catch (error) {
     console.error("Error updating project:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Failed to update project", error: error.message });
   }
 };
 
@@ -77,19 +108,30 @@ const deleteProject = async (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-      return res.status(400).send("Project ID is required");
+      return res.redirect('/?error=invalid_id');
     }
 
-    await projectModel.deleteProject(id);
-    res.status(200).json({ message: "Project deleted successfully" });
+    console.log("Deleting project with ID:", id);
+    const deletedProject = await projectModel.deleteProject(id);
+    
+    if (!deletedProject) {
+      console.log("Project not found with ID:", id);
+      return res.redirect('/?error=project_not_found');
+    }
+    
+    console.log("Project deleted successfully:", deletedProject);
+    
+    // Always redirect to index page for form submissions
+    return res.redirect('/');
   } catch (error) {
     console.error("Error deleting project:", error);
-    res.status(500).json({ message: "Server error", error });
+    return res.redirect('/?error=delete_failed');
   }
 };
 
 module.exports = {
   getAllProjects,
+  getProjectById,
   addProject,
   updateProject,
   deleteProject
