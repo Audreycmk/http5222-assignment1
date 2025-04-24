@@ -12,19 +12,26 @@ const getAllProjects = async (req, res) => {
       projectList = await projectModel.getProjects();
     }
 
-    // Transform media paths to full URLs if they exist
+    // Map over the project list to extract the actual data and ensure media is in the expected format
     const projectsWithMedia = projectList.map(project => ({
-      ...project._doc,
-      media: project.media || null
+      _id: project._id, // Ensure _id is included if needed for React key
+      name: project.name,
+      description: project.description,
+      date: project.date,
+      technologies: project.technologies,
+      github: project.github,
+      website: project.website,
+      media: project.media || null // Ensure media field is present, fallback to null if missing
     }));
     
-
-    res.json(projectsWithMedia);
+    // Send the response as a plain array of projects
+    res.json(projectsWithMedia); 
   } catch (error) {
     console.error("Error fetching projects: ", error);
     res.status(500).json({ message: "Error retrieving projects" });
   }
 };
+
 
 // Get a single project by ID
 const getProjectById = async (req, res) => {
